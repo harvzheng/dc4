@@ -8,8 +8,6 @@ export default class App extends React.Component {
     this.state ={
       swList: [],
       page: 1,
-      // limit: 0,
-      // count: 0,
       loading: true,
       nextApiCall: 'https://swapi.co/api/people/',
     }
@@ -21,8 +19,10 @@ export default class App extends React.Component {
       console.log(err)
     }
   }
+  //handles remote requests, i.e. adds new stuff when it is called
   async makeRemoteRequest(){
     const page = this.state.page;
+    //the next two lines are with the help of https://medium.com/@alialhaddad/fetching-data-in-react-native-d92fb6876973
     const starWarsApiCall = await fetch('https://swapi.co/api/people/?page=' + page);
     const starWarsJSON = await starWarsApiCall.json();
     if (this.state.nextApiCall != null){
@@ -30,11 +30,10 @@ export default class App extends React.Component {
         swList: this.state.swList.concat(starWarsJSON.results),
         loading: false,
         nextApiCall: starWarsJSON.next,
-        // limit: starWarsJSON.count,
       })
     }
-    this.setState
   }
+  //increments page count to add more people to the list
   handleLoadMore = () => {
     if(this.state.nextApiCall != null){
       this.setState({
@@ -44,6 +43,8 @@ export default class App extends React.Component {
       }
     )}
   }
+
+  //template to render each item with
   renderItem(data) {
     return <View style={styles.listItem}>
             <Text style={[styles.listItemText, styles.listItemTextMain]}>{data.item.name}</Text>
@@ -55,8 +56,9 @@ export default class App extends React.Component {
   render() {
     const { swList, loading } = this.state;
     if(loading){
-      return <Text>Now loading...</Text>    
+      return <ActivityIndicator/>
     }
+    //flatlist w/ help of Flatlist Docs and Nick Masri
     return (
       <View style={styles.container}>
         <Text style={styles.displayText}>Star Wars Characters</Text>
@@ -71,7 +73,6 @@ export default class App extends React.Component {
       </View>
     );
   }
-
 }
 
 const styles = StyleSheet.create({
