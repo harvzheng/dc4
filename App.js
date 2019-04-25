@@ -8,12 +8,18 @@ export default class App extends React.Component {
     this.state ={
       swList: [],
       page: 1,
+      limit: 0,
       loading: true,
       nextApiCall: 'https://swapi.co/api/people/',
     }
   } 
   async componentDidMount(){
     try {
+      const starWarsApiCall = await fetch('https://swapi.co/api/people/');
+      const starWarsJSON = await starWarsApiCall.json();
+      this.setState({
+        limit: starWarsJSON.count,
+      })
       this.makeRemoteRequest();
     } catch(err) {
       console.log(err)
@@ -68,7 +74,7 @@ export default class App extends React.Component {
           renderItem={this.renderItem}
           keyExtractor={(item) => item.name}
           onEndReached={this.handleLoadMore}
-          onEndReachedThreshold={1000}
+          onEndReachedThreshold={this.state.limit}
           />
       </View>
     );
